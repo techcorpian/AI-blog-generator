@@ -8,12 +8,12 @@ import Card from './blog/UIElements/Card';
 import PostModal from './blog/UIElements/PostModal';
 
 interface Blog {
-  id: string;
+  id: number;
   img: string;
   title: string;
   content: string;
   createdAt: string;
-  createdBy: String;
+  createdBy: string;
 }
 
 export default function HomePage() {
@@ -104,7 +104,7 @@ export default function HomePage() {
   };
 
   // Delete Blog
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     setLoading(true);
     try {
       const res = await fetch('/api/blogs', {
@@ -165,8 +165,7 @@ export default function HomePage() {
       // Filter by search term
       (searchTerm === "" ||
         (searchType === "title" && blog.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (searchType === "user" && blog.createdBy.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (searchType === "category" && blog.category?.toLowerCase().includes(searchTerm.toLowerCase()))) &&
+        (searchType === "user" && blog.createdBy.toLowerCase().includes(searchTerm.toLowerCase()))) &&
 
       // Filter by date range
       (!from || blogDate >= from) &&
@@ -252,7 +251,7 @@ console.log(blogs)
           {filteredBlogs
             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // Sort by date in descending order
             .map((blog) => (
-              <Card key={blog.id} blog={blog} handleDelete={handleDelete} />
+              <Card key={Number(blog.id)} blog={blog} handleDelete={handleDelete} />
             ))}
         </div>
 

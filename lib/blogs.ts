@@ -5,8 +5,7 @@ interface Blog {
   img: string;
   title: string;
   content: string;
-  createdAt: string;
-  createdBy: string;
+  createdAt: Date;
 }
 
 let blogs: Blog[] = [];
@@ -16,12 +15,12 @@ export function getBlogs(): Blog[] {
   return blogs;
 }
 
-export function getBlog(id: string): Blog | undefined {
+export function getBlog(id: number): Blog | undefined {
   return blogs.find((b) => b.id === id);
 }
 
 export function addBlog(blog: Omit<Blog, 'id'>): Blog {
-  const newBlog: Blog = { ...blog, id: (currentId++).toString() };  // Convert number to string
+  const newBlog: Blog = { ...blog, id: (currentId++) };  // Convert number to string
   blogs.push(newBlog);
   return newBlog;
 }

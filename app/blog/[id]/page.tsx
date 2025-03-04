@@ -46,13 +46,13 @@ export default function BlogPage() {
             <h1 className="bg-gray-200 my-4 w-full h-20 animate-pulse"></h1>
             <div className="bg-gray-200 my-4 w-full h-100 my-7 animate-pulse"></div>
 
-                {Array(5).fill().map((_, index) => (
-                    <p key={index} className="bg-gray-200 my-1 w-full h-5 animate-pulse"></p>
-                ))}
+            {Array(5).fill(undefined).map((_, index: number) => (
+                <p key={index} className="bg-gray-200 my-1 w-full h-5 animate-pulse"></p>
+            ))}
 
         </div>
     );
-    
+
     if (!blog) return <p>Blog not found.</p>;
 
 
@@ -64,7 +64,7 @@ export default function BlogPage() {
 
             <p className="text-gray-600 mt-4 text-center">{new Date(blog.createdAt).toLocaleString()}</p>
             <h1 className="md:text-4xl text-3xl  font-bold mb-4 text-center text-neutral-800">{blog.title}</h1>
-            <img src={blog.img} alt="" className='my-9 rounded-xl' />
+            <img src={String(blog.img)} alt="" className='my-9 rounded-xl' />
             <p className="mt-4 text-gray-800 text-xl text-justify first-letter:text-4xl first-letter:font-bold">{blog.content}</p>
 
         </div>
