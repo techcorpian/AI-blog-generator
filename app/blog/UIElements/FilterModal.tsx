@@ -68,13 +68,13 @@ const FilterModal: React.FC<FilterModalProps> = ({
                 <div className="flex gap-3">
                     <button
                         onClick={onClose}
-                        className="w-full bg-blue-600 text-white py-2 rounded-md"
+                        className="w-full border border-neutral-500 text-neutral-500 py-2 rounded-md"
                     >
                         Close
                     </button>
                     <button
                         onClick={onClose}
-                        className="w-full bg-blue-600 text-white py-2 rounded-md"
+                        className="w-full bg-neutral-900 text-white py-2 rounded-md"
                     >
                         Apply Filters
                     </button>
