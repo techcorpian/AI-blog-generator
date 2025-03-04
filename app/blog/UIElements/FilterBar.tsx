@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import FilterModal from "./FilterModal";
 import { FaFilter } from "react-icons/fa";
 import { BlogContext } from '../context/BlogContext';
@@ -7,6 +7,18 @@ const FilterBar: React.FC = () => {
     const { quickFilter, searchType, searchTerm, fromDate, toDate, setQuickFilter, setSearchType, setSearchTerm, setFromDate, setToDate, handleQuickFilter } =
     useContext(BlogContext) ?? {};
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (isModalOpen) {
+        document.body.style.overflow = "hidden";
+    } else {
+        document.body.style.overflow = "auto";
+    }
+
+    return () => {
+        document.body.style.overflow = "auto";
+    };
+}, [isModalOpen]);
 
   return (
     <>

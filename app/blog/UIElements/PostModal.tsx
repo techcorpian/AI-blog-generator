@@ -12,6 +12,18 @@ export default function PostModal() {
     const hasAnimated = useRef<boolean>(false);
 
     useEffect(() => {
+        if (isModalOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+    
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [isModalOpen]);
+
+    useEffect(() => {
         if (isModalOpen && previewBlog && !hasAnimated.current) {
             setAnimatedTitle("");
             setAnimatedContent("");
