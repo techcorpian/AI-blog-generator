@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from 'react';
 import { BlogContext } from '../../context/BlogContext';
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter } from 'next/navigation';
-import { Blog } from '@/lib/Interface';
+import EditLoading from '../../UIElements/EditLoading';
 
 export default function EditBlogPage() {
   const { blog, setBlog, loading, handleFetchBlogById, handleUpdate } =
@@ -19,8 +19,8 @@ export default function EditBlogPage() {
     }
 }, [id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (!blog) return <p>Blog not found.</p>;
+  if (loading) return <EditLoading/>;
+  if (!blog) return <EditLoading/>;
   
 
   return (
@@ -55,7 +55,7 @@ export default function EditBlogPage() {
       <textarea
         value={blog.content}
         onChange={(e) => setBlog && setBlog({ ...blog, content: e.target.value })}
-        className="w-full p-2 px-4 bg-white rounded-lg mt-2 h-40 shadow-md border border-neutral-200"
+        className="w-full p-2 px-4 bg-white rounded-lg mt-2 h-70 shadow-md border border-neutral-200"
       />
 
       <button

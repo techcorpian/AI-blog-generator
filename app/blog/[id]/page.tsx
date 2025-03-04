@@ -4,10 +4,11 @@ import { useEffect, useContext } from 'react';
 import { BlogContext } from '../context/BlogContext';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import ViewLoading from '../UIElements/ViewLoading';
 
 export default function BlogPage() {
     const { blog, loading, handleFetchBlogById } =
-    useContext(BlogContext) ?? {};
+        useContext(BlogContext) ?? {};
     const { id } = useParams();
 
     useEffect(() => {
@@ -17,19 +18,10 @@ export default function BlogPage() {
     }, [id]);
 
     if (loading) return (
-        <div className="flex flex-col justify-center items-center max-w-3xl mx-auto p-4">
-            <p className="bg-gray-200 mt-12 w-1/2 h-5 animate-pulse"></p>
-            <h1 className="bg-gray-200 my-4 w-full h-20 animate-pulse"></h1>
-            <div className="bg-gray-200 my-4 w-full h-100 my-7 animate-pulse"></div>
-
-            {Array(5).fill(undefined).map((_, index: number) => (
-                <p key={index} className="bg-gray-200 my-1 w-full h-5 animate-pulse"></p>
-            ))}
-
-        </div>
+        <ViewLoading />
     );
 
-    if (!blog) return <p>Blog not found.</p>;
+    if (!blog) return <ViewLoading />;
 
 
     return (

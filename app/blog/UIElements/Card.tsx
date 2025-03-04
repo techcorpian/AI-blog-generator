@@ -19,20 +19,24 @@ export default function Card({ blog }: CardProps) {
     const router = useRouter();
 
     return (
-        <MuiCard key={blog.id} sx={{
-            p: 0,
-            background: 'none',
-            boxShadow: '0',
-            borderRadius: '1rem',
-            transition: 'all 0.3s ease',
-            '&:hover': {
-                boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
-                transform: 'scale(1.05)',
-            },
-        }} className='flex flex-col justify-between '>
 
+        <MuiCard key={blog.id}
+            sx={{
+                p: 0,
+                background: 'none',
+                boxShadow: '0',
+                borderRadius: '1rem',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+                    transform: 'scale(1.05)',
+                },
+
+            }} className='flex flex-col justify-between '>
             <CardContent className='flex flex-col'>
-                <img src={String(blog.img)} className='h-50 w-full bg-neutral-200 mb-6 rounded-xl object-cover' />
+                <Link href={`/blog/${blog.id}`}>
+                    <img src={String(blog.img)} className='h-50 w-full bg-neutral-200 mb-6 rounded-xl object-cover' />
+                </Link>
                 <div className='flex items-center text-xs font-medium text-neutral-500'>
                     <div>
                         {blog.createdBy}
