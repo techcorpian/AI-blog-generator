@@ -64,7 +64,7 @@ export default function BlogPage() {
 
             <p className="text-gray-600 mt-4 text-center">{new Date(blog.createdAt).toLocaleString()}</p>
             <h1 className="md:text-4xl text-3xl  font-bold mb-4 text-center text-neutral-800">{blog.title}</h1>
-            <img src={String(blog.img)} alt="" className='my-9 rounded-xl' />
+            <img src={String(blog.img)} alt="" className='my-9 rounded-xl h-100 w-full object-cover' />
             <p className="mt-4 text-gray-800 text-xl text-justify first-letter:text-4xl first-letter:font-bold">{blog.content}</p>
 
         </div>

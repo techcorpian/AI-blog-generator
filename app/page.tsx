@@ -6,6 +6,7 @@ import InputGen from './blog/UIElements/InputGen';
 import Loading from './blog/UIElements/Loading';
 import Card from './blog/UIElements/Card';
 import PostModal from './blog/UIElements/PostModal';
+import FilterBar from './blog/UIElements/FilterBar';
 
 interface Blog {
   id: number;
@@ -173,7 +174,7 @@ export default function HomePage() {
     );
   });
 
-console.log(blogs)
+  console.log(blogs)
 
 
   return (
@@ -183,66 +184,20 @@ console.log(blogs)
         <InputGen handleGenerate={handleGenerate} handleChange={handleChange} loading={generate} topic={topic} />
       </div>
 
-      <div className='flex justify-between items-center mb-4 mt-9'>
-        <div className='text-3xl font-bold pb-4'></div>
-        <div className="flex flex-wrap mb-4 gap-4 text-sm text-neutral-500">
-
-          <div className='flex bg-white rounded-full'>
-            {/* Quick Filters Dropdown */}
-            <select
-              value={quickFilter}
-              onChange={(e) => handleQuickFilter(e.target.value)}
-              className="p-2 px-4 border-l border-y border-neutral-400 text-black rounded-l-full focus:outline-none"
-            >
-              <option value="">Select Date Filter</option>
-              <option value="lastWeek">Last Week</option>
-              <option value="lastMonth">Last Month</option>
-              <option value="lastYear">Last Year</option>
-            </select>
-
-            <div className='flex items-center'>
-              {/* From Date */}
-              <input
-                type="date"
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-                className="p-2 border-l border-y border-neutral-400 focus:outline-none"
-              />
-
-              {/* To Date */}
-              <input
-                type="date"
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
-                className="p-2 pr-4 border-r border-y border-neutral-400 focus:outline-none rounded-r-full"
-              />
-            </div>
-          </div>
-
-          <div className='flex bg-white rounded-full'>
-            {/* Search Type Dropdown */}
-            <select
-              value={searchType}
-              onChange={(e) => setSearchType(e.target.value)}
-              className="p-2 pl-4 border-l border-y border-neutral-400 text-black rounded-l-full focus:outline-none"
-            >
-              <option value="title">Search by Title</option>
-              <option value="user">Search by User</option>
-              <option value="category">Search by Category</option>
-            </select>
-
-            {/* Search Input */}
-            <input
-              type="text"
-              placeholder={`Search by ${searchType.charAt(0).toUpperCase() + searchType.slice(1)}...`}
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="p-2 pr-4 border border-neutral-400 focus:outline-none rounded-r-full w-64"
-            />
-          </div>
-        </div>
-
-      </div>
+      {/* Use the FilterBar component */}
+      <FilterBar
+        quickFilter={quickFilter}
+        searchType={searchType}
+        searchTerm={searchTerm}
+        fromDate={fromDate}
+        toDate={toDate}
+        setQuickFilter={setQuickFilter}
+        setSearchType={setSearchType}
+        handleSearchChange={handleSearchChange}
+        setFromDate={setFromDate}
+        setToDate={setToDate}
+        handleQuickFilter={handleQuickFilter}
+      />
       {loading ? (
         <Loading />
       ) : (
@@ -257,7 +212,7 @@ console.log(blogs)
 
       )}
 
-      <PostModal isModalOpen={isModalOpen} previewBlog={previewBlog} setPreviewBlog={setPreviewBlog} setIsModalOpen={setIsModalOpen} handlePostBlog={handlePostBlog}/>
+      <PostModal isModalOpen={isModalOpen} previewBlog={previewBlog} setPreviewBlog={setPreviewBlog} setIsModalOpen={setIsModalOpen} handlePostBlog={handlePostBlog} />
     </div>
   );
 }
