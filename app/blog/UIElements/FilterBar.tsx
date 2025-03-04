@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import FilterModal from "./FilterModal";
+import { FaFilter } from "react-icons/fa";
+
 
 interface FilterBarProps {
   quickFilter: string;
@@ -42,6 +44,7 @@ const FilterBar: React.FC<FilterBarProps> = (props) => {
               <input
                 type="date"
                 value={props.fromDate}
+                placeholder="From Date"
                 onChange={(e) => props.setFromDate(e.target.value)}
                 className="p-2 border-l border-y border-neutral-400 focus:outline-none"
               />
@@ -50,6 +53,7 @@ const FilterBar: React.FC<FilterBarProps> = (props) => {
               <input
                 type="date"
                 value={props.toDate}
+                placeholder="To Date"
                 onChange={(e) => props.setToDate(e.target.value)}
                 className="p-2 pr-4 border-r border-y border-neutral-400 focus:outline-none rounded-r-full"
               />
@@ -81,12 +85,12 @@ const FilterBar: React.FC<FilterBarProps> = (props) => {
       </div>
 
       {/* Mobile View */}
-      <div className="lg:hidden flex justify-between items-center mb-4">
+      <div className="lg:hidden flex justify-between items-center mb-1 mx-4">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-blue-600 text-white p-2 rounded-md"
+          className="border border-neutral-500 text-neutral-500 p-2 rounded-lg"
         >
-          Open Filters
+          <FaFilter/>
         </button>
       </div>
 
