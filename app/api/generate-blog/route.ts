@@ -23,7 +23,8 @@ export async function POST(request: Request) {
     title: `Blog on ${topic}`,
     img: randomImage,
     content: `This is a mock blog post about ${topic}. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-    createdAt: new Date(),
+    createdAt: new Date().toString() ,
+    createdBy: 'You'
   };
 
   // Simulate asynchronous delay
