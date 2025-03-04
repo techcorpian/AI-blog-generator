@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   const newBlogData = {
     title: `Blog on ${topic}`,
     img: randomImage,
-    content: `This is a mock blog post about ${topic}. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+    content: `This is a mock blog post about ${topic}. The topic of ${topic} is highly relevant in today's world, and understanding its intricacies is crucial. Whether you're just getting started or looking to deepen your knowledge, there’s always something new to learn. In this post, we'll explore key aspects and insights surrounding ${topic}, offering a comprehensive overview. From historical perspectives to modern advancements, the subject of ${topic} continues to evolve, influencing various fields and industries. The challenges, innovations, and trends within this area are not only fascinating but also impactful. As we delve into these elements, it’s essential to recognize the significance of staying informed and adaptable in a constantly changing environment. Ultimately, the study and application of ${topic} hold great potential for personal and professional growth. Stay tuned as we uncover deeper insights and explore how ${topic} can shape the future.`,
     createdAt: new Date().toString() ,
     createdBy: 'You'
   };

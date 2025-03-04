@@ -32,7 +32,7 @@ export default function PostModal() {
             const typeText = (text: string, setTextFunction: React.Dispatch<React.SetStateAction<string>>, index = 0) => {
                 if (index < text.length) {
                     setTextFunction((prev) => prev + text[index]);
-                    setTimeout(() => typeText(text, setTextFunction, index + 1), 15);
+                    setTimeout(() => typeText(text, setTextFunction, index + 1), 10);
                 }
             };
 
