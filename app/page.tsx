@@ -1,101 +1,264 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect, FormEvent } from 'react';
+
+import InputGen from './blog/UIElements/InputGen';
+import Loading from './blog/UIElements/Loading';
+import Card from './blog/UIElements/Card';
+import PostModal from './blog/UIElements/PostModal';
+
+interface Blog {
+  id: string;
+  img: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  createdBy: String;
+}
+
+export default function HomePage() {
+  const [topic, setTopic] = useState('');
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [previewBlog, setPreviewBlog] = useState<Blog | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [generate, setGenerate] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchType, setSearchType] = useState("title");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [quickFilter, setQuickFilter] = useState("");
+
+  // Fetch blogs from backend
+  const fetchBlogs = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/blogs');
+      if (res.ok) {
+        const data = await res.json();
+        setBlogs(data);
+      }
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  // Generate Blog (Preview)
+  const handleGenerate = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!topic) return;
+
+    setGenerate(true);
+    try {
+      const res = await fetch('/api/generate-blog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic }),
+      });
+
+      if (res.ok) {
+        const newBlog = await res.json();
+        setPreviewBlog(newBlog);
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error('Error generating blog:', error);
+    } finally {
+      setGenerate(false);
+    }
+  };
+
+  // Save Preview Blog to Backend
+  const handlePostBlog = async () => {
+    if (!previewBlog) return;
+
+    console.log(previewBlog);
+
+    try {
+      const res = await fetch('/api/blogs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(previewBlog),
+      });
+
+      if (res.ok) {
+        const newBlog = await res.json();
+        setBlogs((prev) => [...prev, newBlog]);
+        setPreviewBlog(null);
+        setTopic('');
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Error saving blog:', error);
+    }
+  };
+
+  const handleChange = async (e: any) => {
+    setTopic(e.target.value);
+  };
+
+  // Delete Blog
+  const handleDelete = async (id: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/blogs', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+
+      if (res.ok) {
+        setBlogs((prev) => prev.filter((blog) => blog.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting blog:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleQuickFilter = (type: string) => {
+    setQuickFilter(type);
+
+    const now = new Date();
+    let startDate = new Date();
+
+    if (type === "lastWeek") startDate.setDate(now.getDate() - 7);
+    else if (type === "lastMonth") startDate.setMonth(now.getMonth() - 1);
+    else if (type === "lastYear") startDate.setFullYear(now.getFullYear() - 1);
+    else {
+      setFromDate("");
+      setToDate("");
+      return;
+    }
+
+    // Set 'from' time to 00:00:00
+    startDate.setHours(0, 0, 0, 0);
+
+    // Set 'to' time to 23:59:59
+    const endDate = new Date(now);
+    endDate.setHours(23, 59, 59, 999);
+
+    setFromDate(startDate.toISOString().split("T")[0]); // Format: YYYY-MM-DD
+    setToDate(endDate.toISOString().split("T")[0]); // Format: YYYY-MM-DD
+  };
+
+
+  // Filter blogs dynamically
+  const filteredBlogs = blogs.filter((blog) => {
+    const blogDate = new Date(blog.createdAt);
+    const from = fromDate ? new Date(fromDate + "T00:00:00") : null; // Set time to 00:00:00
+    const to = toDate ? new Date(toDate + "T23:59:59") : null; // Set time to 23:59:59
+
+    // Filtering based on search term, category, user, and date range
+    return (
+      // Filter by search term
+      (searchTerm === "" ||
+        (searchType === "title" && blog.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (searchType === "user" && blog.createdBy.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (searchType === "category" && blog.category?.toLowerCase().includes(searchTerm.toLowerCase()))) &&
+
+      // Filter by date range
+      (!from || blogDate >= from) &&
+      (!to || blogDate <= to)
+    );
+  });
+
+console.log(blogs)
+
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="max-w-7xl mx-auto p-4 px-9">
+      <div className="max-w-3xl mx-auto p-4">
+        <h1 className="text-4xl font-bold mb-8 text-center">Generate Your Blog With Our AI-Powered Blog Generator.</h1>
+        <InputGen handleGenerate={handleGenerate} handleChange={handleChange} loading={generate} topic={topic} />
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+      <div className='flex justify-between items-center mb-4 mt-9'>
+        <div className='text-3xl font-bold pb-4'></div>
+        <div className="flex flex-wrap mb-4 gap-4 text-sm text-neutral-500">
+
+          <div className='flex bg-white rounded-full'>
+            {/* Quick Filters Dropdown */}
+            <select
+              value={quickFilter}
+              onChange={(e) => handleQuickFilter(e.target.value)}
+              className="p-2 px-4 border-l border-y border-neutral-400 text-black rounded-l-full focus:outline-none"
+            >
+              <option value="">Select Date Filter</option>
+              <option value="lastWeek">Last Week</option>
+              <option value="lastMonth">Last Month</option>
+              <option value="lastYear">Last Year</option>
+            </select>
+
+            <div className='flex items-center'>
+              {/* From Date */}
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="p-2 border-l border-y border-neutral-400 focus:outline-none"
+              />
+
+              {/* To Date */}
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="p-2 pr-4 border-r border-y border-neutral-400 focus:outline-none rounded-r-full"
+              />
+            </div>
+          </div>
+
+          <div className='flex bg-white rounded-full'>
+            {/* Search Type Dropdown */}
+            <select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+              className="p-2 pl-4 border-l border-y border-neutral-400 text-black rounded-l-full focus:outline-none"
+            >
+              <option value="title">Search by Title</option>
+              <option value="user">Search by User</option>
+              <option value="category">Search by Category</option>
+            </select>
+
+            {/* Search Input */}
+            <input
+              type="text"
+              placeholder={`Search by ${searchType.charAt(0).toUpperCase() + searchType.slice(1)}...`}
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="p-2 pr-4 border border-neutral-400 focus:outline-none rounded-r-full w-64"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      </div>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-6">
+          {filteredBlogs.length === 0 && <p>No blogs available. Generate one!</p>}
+          {filteredBlogs
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // Sort by date in descending order
+            .map((blog) => (
+              <Card key={blog.id} blog={blog} handleDelete={handleDelete} />
+            ))}
+        </div>
+
+      )}
+
+      <PostModal isModalOpen={isModalOpen} previewBlog={previewBlog} setPreviewBlog={setPreviewBlog} setIsModalOpen={setIsModalOpen} handlePostBlog={handlePostBlog}/>
     </div>
   );
 }
