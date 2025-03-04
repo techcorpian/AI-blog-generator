@@ -1,30 +1,11 @@
-import { useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
+import { BlogContext } from '../context/BlogContext';
 import { motion, AnimatePresence } from "framer-motion";
 
-interface Blog {
-    id: number;
-    img: string;
-    title: string;
-    content: string;
-    createdAt: string;
-    createdBy: string;
-  }
+export default function PostModal() {
+    const { isModalOpen, previewBlog, setPreviewBlog, setIsModalOpen, handlePostBlog} =
+    useContext(BlogContext) ?? {};
 
-interface PostModalProps {
-    isModalOpen: boolean;
-    previewBlog: Blog | null;
-    setPreviewBlog: React.Dispatch<React.SetStateAction<Blog | null>>;
-    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    handlePostBlog: () => void;
-  }
-
-export default function PostModal({
-    isModalOpen,
-    previewBlog,
-    setPreviewBlog,
-    setIsModalOpen,
-    handlePostBlog,
-}: PostModalProps) {
     const [animatedTitle, setAnimatedTitle] = useState<string>("");
     const [animatedContent, setAnimatedContent] = useState<string>("");
     const [isImagePreviewOpen, setIsImagePreviewOpen] = useState<boolean>(false);
@@ -50,26 +31,27 @@ export default function PostModal({
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setAnimatedTitle(e.target.value);
-        if (previewBlog) {
+        if (previewBlog && setPreviewBlog) {
           setPreviewBlog((prev) => (prev ? { ...prev, title: e.target.value } : null));
         }
       };
       
       const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setAnimatedContent(e.target.value);
-        if (previewBlog) {
+        if (previewBlog && setPreviewBlog) {
           setPreviewBlog((prev) => (prev ? { ...prev, content: e.target.value } : null));
         }
       };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (previewBlog) {
+        if (previewBlog && setPreviewBlog) {
             setPreviewBlog((prev) => (prev ? { ...prev, img: e.target.value } : null));
         }
     };
 
     return (
         <>
+            {/* AI Generated Preview Modal */}
             <AnimatePresence>
                 {isModalOpen && previewBlog && (
                     <motion.div
@@ -92,7 +74,7 @@ export default function PostModal({
                                     onClick={() => setIsImagePreviewOpen(true)}
                                 >
                                     <img
-                                        src={previewBlog.img}
+                                        src={String(previewBlog.img)}
                                         alt="Preview"
                                         className="w-full h-full object-cover rounded-xl"
                                     />
@@ -103,7 +85,7 @@ export default function PostModal({
                             )}
                             <input
                                 type="hidden"
-                                value={previewBlog.img || ""}
+                                value={String(previewBlog.img) || ""}
                                 onChange={handleImageChange}
                                 className="w-full p-2 px-4 bg-neutral-100 rounded-lg mt-2"
                             />
@@ -121,7 +103,7 @@ export default function PostModal({
                             <div className="flex justify-end mt-4 gap-2">
                                 <button
                                     onClick={() => {
-                                        setIsModalOpen(false);
+                                        setIsModalOpen && setIsModalOpen(false);
                                         hasAnimated.current = false;
                                     }}
                                     className="px-4 py-2 text-sm border border-neutral-500 text-neutral-500 hover:border-neutral-600 hover:text-neutral-600 cursor-pointer rounded-full"
@@ -140,6 +122,7 @@ export default function PostModal({
                 )}
             </AnimatePresence>
 
+            {/* Image Modal Preview */}
             <AnimatePresence>
                 {isImagePreviewOpen && (
                     <motion.div
@@ -163,7 +146,7 @@ export default function PostModal({
                             </button>
                             {previewBlog && previewBlog.img && (
                                 <img
-                                    src={previewBlog.img}
+                                    src={String(previewBlog.img)}
                                     alt="Full Preview"
                                     className="max-w-full max-h-[80vh] rounded-lg"
                                 />

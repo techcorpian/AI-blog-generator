@@ -1,13 +1,11 @@
+import { useContext } from 'react';
 import { HiOutlineSparkles } from "react-icons/hi2";
+import { BlogContext } from '../context/BlogContext';
 
-interface InputGenProps {
-  handleGenerate: (e: React.FormEvent) => void;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  loading: boolean;
-  topic: string;
-}
+const InputGen: React.FC = () => {
+  const { topic, generate, handleGenerate, handleChange } =
+  useContext(BlogContext) ?? {};
 
-const InputGen: React.FC<InputGenProps> = ({ handleGenerate, handleChange, loading, topic }) => {
   return (
     <form
       onSubmit={handleGenerate}
@@ -23,14 +21,14 @@ const InputGen: React.FC<InputGenProps> = ({ handleGenerate, handleChange, loadi
       <button
         type="submit"
         className="px-5 py-3 flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-400 to-purple-600 text-white font-semibold shadow-md hover:scale-105 transition-transform duration-300 disabled:opacity-50 cursor-pointer"
-        disabled={loading}
+        disabled={generate}
       >
-        {loading ? (
+        {generate ? (
           <HiOutlineSparkles className="text-2xl text-white glow" />
         ) : (
           <HiOutlineSparkles className="text-xl" />
         )}
-        <div className="md:block hidden">{loading ? "Generating..." : "Generate Blog"}</div>
+        <div className="md:block hidden">{generate ? "Generating..." : "Generate Blog"}</div>
       </button>
     </form>
   );

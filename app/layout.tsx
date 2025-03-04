@@ -1,6 +1,7 @@
 // app/layout.tsx
 
 import './globals.css';
+import { BlogProvider } from './blog/context/BlogContext';
 
 export default function RootLayout({
   children
@@ -12,7 +13,9 @@ export default function RootLayout({
       <head>
         <title>My Blog App</title>
       </head>
-      <body>{children}</body>
+      <BlogProvider>
+        <body>{children}</body>
+      </BlogProvider>
     </html>
   );
 }

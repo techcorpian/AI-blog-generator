@@ -1,43 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-
-interface Blog {
-    id: string;
-    img: String;
-    title: string;
-    content: string;
-    createdAt: string;
-}
+import { useEffect, useContext } from 'react';
+import { BlogContext } from '../context/BlogContext';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
 
 export default function BlogPage() {
+    const { blog, loading, handleFetchBlogById } =
+    useContext(BlogContext) ?? {};
     const { id } = useParams();
-    const router = useRouter();
-    const [blog, setBlog] = useState<Blog | null>(null);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchBlog = async () => {
-            try {
-                const res = await fetch('/api/blogs');
-                if (res.ok) {
-                    const blogs: Blog[] = await res.json();
-                    const foundBlog = blogs.find((b) => b.id === String(id));
-                    if (foundBlog) {
-                        setBlog(foundBlog);
-                    } else {
-                        console.error('Blog not found');
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching blog:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchBlog();
+        if (id && handleFetchBlogById) {
+            handleFetchBlogById(id.toString());
+        }
     }, [id]);
 
     if (loading) return (
@@ -58,9 +34,9 @@ export default function BlogPage() {
 
     return (
         <div className="max-w-3xl mx-auto p-4">
-            <button onClick={() => router.back()} className="text-neutral-800 hover:text-neutral-500 cursor-pointer">
+            <Link href='/' className="text-blue-500 hover:underline">
                 ← Back
-            </button>
+            </Link>
 
             <p className="text-gray-600 mt-4 text-center">{new Date(blog.createdAt).toLocaleString()}</p>
             <h1 className="md:text-4xl text-3xl  font-bold mb-4 text-center text-neutral-800">{blog.title}</h1>

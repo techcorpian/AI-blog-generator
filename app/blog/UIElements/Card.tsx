@@ -1,42 +1,38 @@
+import { useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card as MuiCard, CardContent, Typography, Button, Box } from '@mui/material';
+import { BlogContext } from '../context/BlogContext';
 
 import { LuDot } from "react-icons/lu";
 import { CiEdit, CiTrash } from "react-icons/ci";
+import { Blog } from '@/lib/Interface';
 
-interface Blog {
-    id: number;
-    img: string;
-    title: string;
-    createdAt: string;
-    createdBy: string;
-    content: string;
-}
 
 interface CardProps {
     blog: Blog;
-    handleDelete: (id: number) => void;
 }
 
-export default function Card({ blog, handleDelete }: CardProps) {
+export default function Card({ blog }: CardProps) {
+    const { handleDelete } =
+        useContext(BlogContext) ?? {};
     const router = useRouter();
 
     return (
         <MuiCard key={blog.id} sx={{
             p: 0,
             background: 'none',
-            boxShadow: '0',  // Default shadow
-            borderRadius: '1rem',  // Rounded corners
-            transition: 'all 0.3s ease',  // Smooth transition for the shadow
+            boxShadow: '0',
+            borderRadius: '1rem',
+            transition: 'all 0.3s ease',
             '&:hover': {
-              boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',  // Darker and larger shadow on hover
-              transform: 'scale(1.05)',
+                boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+                transform: 'scale(1.05)',
             },
-          }} className='flex flex-col justify-between '>
-  
+        }} className='flex flex-col justify-between '>
+
             <CardContent className='flex flex-col'>
-            <img src={blog.img} className='h-50 w-full bg-neutral-200 mb-6 rounded-xl object-cover' />
+                <img src={String(blog.img)} className='h-50 w-full bg-neutral-200 mb-6 rounded-xl object-cover' />
                 <div className='flex items-center text-xs font-medium text-neutral-500'>
                     <div>
                         {blog.createdBy}
@@ -62,7 +58,10 @@ export default function Card({ blog, handleDelete }: CardProps) {
                 </Link>
                 {blog.createdBy != 'You' ? "" :
                     <div className='flex gap-2'>
-                        <Button sx={{ minWidth: '20px', padding: '4px' }} onClick={() => handleDelete(blog.id)}>
+                        <Button
+                            sx={{ minWidth: '20px', padding: '4px' }}
+                            onClick={() => handleDelete && handleDelete(blog.id)}
+                        >
                             <CiTrash className='text-2xl' />
                         </Button>
                         <Button

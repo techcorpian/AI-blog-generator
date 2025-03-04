@@ -1,70 +1,27 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { BlogContext } from '../../context/BlogContext';
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter } from 'next/navigation';
-
-interface Blog {
-  id: string;
-  img: string;
-  title: string;
-  content: string;
-  createdAt: string;
-}
+import { Blog } from '@/lib/Interface';
 
 export default function EditBlogPage() {
+  const { blog, setBlog, loading, handleFetchBlogById, handleUpdate } =
+  useContext(BlogContext) ?? {};
+  
   const { id } = useParams();
   const router = useRouter();
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState(true);
   const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
 
   useEffect(() => {
-    const fetchBlog = async () => {
-      try {
-        const res = await fetch('/api/blogs');
-        if (res.ok) {
-          const blogs: Blog[] = await res.json();
-          const foundBlog = blogs.find((b) => b.id === String(id));
-          if (foundBlog) {
-            setBlog(foundBlog);
-          } else {
-            console.error('Blog not found');
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching blog:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlog();
-  }, [id]);
-
-  const handleUpdate = async () => {
-    if (!blog) return;
-
-    try {
-      const res = await fetch('/api/blogs', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(blog),
-      });
-
-      if (res.ok) {
-        alert('Blog updated successfully!');
-        router.push(`/blog/${id}`); // Redirect to the updated blog page
-      } else {
-        const errorData = await res.json();
-        console.error('Failed to update blog:', errorData.error);
-      }
-    } catch (error) {
-      console.error('Error updating blog:', error);
+    if (id && handleFetchBlogById) {
+        handleFetchBlogById(id.toString());
     }
-  };
+}, [id]);
 
   if (loading) return <p>Loading...</p>;
   if (!blog) return <p>Blog not found.</p>;
+  
 
   return (
     <div className="max-w-3xl mx-auto p-4">
@@ -77,7 +34,7 @@ export default function EditBlogPage() {
       {blog.img && (
         <div className="relative h-50 w-full cursor-pointer" onClick={() => setIsImagePreviewOpen(true)}>
           <img
-            src={blog.img}
+            src={String(blog.img)}
             alt="Preview"
             className="w-full h-full object-cover rounded-xl"
           />
@@ -91,18 +48,18 @@ export default function EditBlogPage() {
       <input
         type="text"
         value={blog.title}
-        onChange={(e) => setBlog({ ...blog, title: e.target.value })}
+        onChange={(e) => setBlog && setBlog({ ...blog, title: e.target.value })}
         className="w-full p-2 px-4 bg-white rounded-lg mt-2 shadow-md border border-neutral-200"
       />
 
       <textarea
         value={blog.content}
-        onChange={(e) => setBlog({ ...blog, content: e.target.value })}
+        onChange={(e) => setBlog && setBlog({ ...blog, content: e.target.value })}
         className="w-full p-2 px-4 bg-white rounded-lg mt-2 h-40 shadow-md border border-neutral-200"
       />
 
       <button
-        onClick={handleUpdate}
+        onClick={() => id && handleUpdate && handleUpdate(id.toString())}
         className="mt-4 bg-neutral-900 text-white px-4 py-2 rounded-full hover:bg-neutral-800"
       >
         Save Changes
@@ -130,7 +87,7 @@ export default function EditBlogPage() {
               >
                 ✕
               </button>
-              <img src={blog.img} alt="Full Preview" className="max-w-full max-h-[80vh] rounded-lg" />
+              <img src={String(blog.img)} alt="Full Preview" className="max-w-full max-h-[80vh] rounded-lg" />
             </motion.div>
           </motion.div>
         )}

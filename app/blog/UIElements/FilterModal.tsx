@@ -1,36 +1,15 @@
-import React from "react";
-
+import React, { useContext } from "react";
+import { BlogContext } from '../context/BlogContext';
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
-    quickFilter: string;
-    searchType: string;
-    searchTerm: string;
-    fromDate: string;
-    toDate: string;
-    setQuickFilter: (value: string) => void;
-    setSearchType: (value: string) => void;
-    handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    setFromDate: (value: string) => void;
-    setToDate: (value: string) => void;
-    handleQuickFilter: (type: string) => void;
 }
 
 const FilterModal: React.FC<FilterModalProps> = ({
     isOpen,
-    onClose,
-    quickFilter,
-    searchType,
-    searchTerm,
-    fromDate,
-    toDate,
-    setQuickFilter,
-    setSearchType,
-    handleSearchChange,
-    setFromDate,
-    setToDate,
-    handleQuickFilter,
-}) => {
+    onClose}) => {
+    const { quickFilter, searchType, searchTerm, fromDate, toDate, setQuickFilter, setSearchType, setSearchTerm, setFromDate, setToDate, handleQuickFilter } =
+    useContext(BlogContext) ?? {};
     if (!isOpen) return null;
 
     return (
@@ -38,10 +17,10 @@ const FilterModal: React.FC<FilterModalProps> = ({
             <div className="bg-white rounded-lg p-6 w-11/12 max-w-md">
                 <h2 className="text-lg font-bold mb-4">Filters</h2>
 
-                {/* Quick Filters Dropdown */}
+                {/* Date Filter */}
                 <select
                     value={quickFilter}
-                    onChange={(e) => handleQuickFilter(e.target.value)}
+                    onChange={(e) => handleQuickFilter && handleQuickFilter(e.target.value)}
                     className="p-2 w-full border border-neutral-400 text-black rounded-md mb-3"
                 >
                     <option value="">Select Date Filter</option>
@@ -50,43 +29,42 @@ const FilterModal: React.FC<FilterModalProps> = ({
                     <option value="lastYear">Last Year</option>
                 </select>
 
-                {/* Date Range */}
+                {/* Date Range Filter */}
                 <div className="flex flex-col gap-2 mb-3">
                     <input
                         type="date"
                         value={fromDate}
-                        onChange={(e) => setFromDate(e.target.value)}
+                        onChange={(e) => setFromDate && setFromDate(e.target.value)}
                         className="p-2 border border-neutral-400 rounded-md"
                     />
                     <input
                         type="date"
                         value={toDate}
-                        onChange={(e) => setToDate(e.target.value)}
+                        onChange={(e) => setToDate && setToDate(e.target.value)}
                         className="p-2 border border-neutral-400 rounded-md"
                     />
                 </div>
 
-                {/* Search Type Dropdown */}
+                {/* Search By Dropdown */}
                 <select
                     value={searchType}
-                    onChange={(e) => setSearchType(e.target.value)}
+                    onChange={(e) => setSearchType && setSearchType(e.target.value)}
                     className="p-2 w-full border border-neutral-400 text-black rounded-md mb-3"
                 >
                     <option value="title">Search by Title</option>
                     <option value="user">Search by User</option>
-                    <option value="category">Search by Category</option>
                 </select>
 
-                {/* Search Input */}
+                {/* Search Box */}
                 <input
                     type="text"
-                    placeholder={`Search by ${searchType.charAt(0).toUpperCase() + searchType.slice(1)}...`}
+                    placeholder={`Search by ${(searchType || 'title').charAt(0).toUpperCase() + (searchType || 'title').slice(1)}...`}
                     value={searchTerm}
-                    onChange={handleSearchChange}
+                    onChange={(e) => setSearchTerm && setSearchTerm(e.target.value)}
                     className="p-2 w-full border border-neutral-400 rounded-md mb-4"
                 />
 
-                {/* Close Button */}
+                {/* Close Button & Apply Button */}
                 <div className="flex gap-3">
                     <button
                         onClick={onClose}
