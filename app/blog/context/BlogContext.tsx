@@ -55,6 +55,8 @@ export const BlogProvider = ({ children }: BlogProviderProps) => {
     const [toDate, setToDate] = useState('');
     const [quickFilter, setQuickFilter] = useState('');
 
+    const router = useRouter();
+
     const [blog, setBlog] = useState<Blog | null>(null);
     // const [loading, setLoading] = useState(true);
 
@@ -147,8 +149,6 @@ export const BlogProvider = ({ children }: BlogProviderProps) => {
 
     const handleUpdate = async (id: string) => {
         if (!blog) return;
-
-        const router = useRouter();
         const success = await updateBlog(blog);
 
         if (success) {
